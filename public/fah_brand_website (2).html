@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAH — Street System</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+
+    body{
+      background:#020202;
+      color:#f2f2f2;
+      overflow-x:hidden;
+    }
+
+    :root{
+      --dark:#050505;
+      --glass:rgba(15,15,15,0.85);
+      --white:#fff;
+    }
+
+    /* NOISE */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:url("https://grainy-gradients.vercel.app/noise.svg");
+      opacity:.06;
+      pointer-events:none;
+      z-index:9999;
+    }
+
+    /* NAV */
+    nav{
+      position:fixed;
+      top:0;width:100%;
+      padding:20px 40px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:rgba(0,0,0,.9);
+      backdrop-filter:blur(15px);
+      z-index:1000;
+      border-bottom:1px solid rgba(255,255,255,.05);
+    }
+
+    .brand{
+      display:flex;align-items:center;gap:12px;
+      font-weight:900;letter-spacing:4px;font-size:20px
+    }
+
+    .brand img{width:42px}
+
+    nav ul{display:flex;list-style:none;gap:30px}
+
+    nav a{
+      color:#eee;text-decoration:none;font-size:12px;
+      font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      opacity:.7;transition:.3s
+    }
+
+    nav a:hover{opacity:1}
+
+    /* HERO */
+    .hero{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      padding:160px 70px 80px;
+      background:
+        linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.95)),
+        url('fah-white.png');
+      background-repeat:no-repeat;
+      background-size:60%;
+      background-position:right center;
+    }
+
+    .hero-left{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:40px
+    }
+
+    .hero-text{
+      font-size:64px;
+      font-weight:900;
+      line-height:1.05;
+      letter-spacing:3px;
+      text-transform:uppercase
+    }
+
+    .hero-text span{
+      display:block;
+      font-size:20px;
+      opacity:.6;
+      margin-top:12px;
+      letter-spacing:2px
+    }
+
+    .hero-right{
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      gap:25px
+    }
+
+    .street-box{
+      background:var(--glass);
+      padding:35px;
+      border-left:4px solid white;
+      backdrop-filter:blur(20px)
+    }
+
+    /* BUTTONS */
+    .btn{
+      padding:14px 32px;
+      background:#fff;
+      color:#000;
+      border:none;
+      font-weight:800;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:.3s
+    }
+
+    .btn.dark{
+      background:#000;color:#fff;
+      border:1px solid rgba(255,255,255,.3)
+    }
+
+    .btn:hover{transform:scale(1.05)}
+
+    /* COUNTDOWN */
+    .countdown{
+      padding:100px 40px;
+      background:#050505;
+      text-align:center
+    }
+
+    .countdown h2{
+      font-size:48px;font-weight:900;letter-spacing:4px;margin-bottom:30px
+    }
+
+    .timer{
+      display:flex;justify-content:center;gap:30px;font-size:26px;font-weight:800
+    }
+
+    .timer div{
+      background:#000;padding:20px 25px;border:1px solid rgba(255,255,255,.08)
+    }
+
+    /* DROP */
+    .drop{padding:140px 70px;background:#040404}
+
+    .drop-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:50px
+    }
+
+    .item{
+      position:relative;
+      overflow:hidden;
+      background:#0a0a0a;padding:24px;border:1px solid rgba(255,255,255,.05);
+      transition:.5s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .item::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg,transparent,rgba(255,255,255,.08),transparent);
+      opacity:0;
+      transition:.5s;
+    }
+
+    .item:hover::before{
+      opacity:1;
+    }
+
+    .item-inner{
+      background:#0a0a0a;padding:24px;border:1px solid rgba(255,255,255,.05);
+      transition:.4s
+    }
+
+    .item:hover{transform:translateY(-8px)}
+
+    .item img{
+      width:100%;
+      margin-bottom:18px;
+      transition:.7s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .item:hover{
+      transform:translateY(-14px) scale(1.02) rotate(-0.3deg);
+      box-shadow:0 30px 60px rgba(0,0,0,.8);
+    }
+
+    .item:hover img{width:100%;margin-bottom:18px}
+
+    .item h3{font-weight:800;margin-bottom:6px}
+
+    .item p{font-size:13px;opacity:.6;margin-bottom:14px}
+
+    /* MANIFEST */
+    .manifest{padding:150px 70px;background:#000}
+
+    .manifest-grid{display:grid;grid-template-columns:2fr 1fr;gap:70px}
+
+    .manifest h2{font-size:64px;font-weight:900;margin-bottom:30px}
+
+    .manifest p{font-size:17px;line-height:1.9;opacity:.9}
+
+    .manifest-tag{
+      background:#050505;padding:35px;border:1px solid rgba(255,255,255,.08);
+      letter-spacing:2px;font-weight:700
+    }
+
+    /* MEMBERS */
+    .members{padding:130px 40px;background:#020202;text-align:center}
+
+    .members-box{
+      max-width:520px;margin:auto;background:var(--glass);
+      padding:60px 45px;border:1px solid rgba(255,255,255,.08)
+    }
+
+    .members input{
+      width:100%;padding:14px;background:#000;border:none;color:#fff;
+      margin:20px 0;text-align:center;letter-spacing:2px
+    }
+
+    /* ADMIN */
+    .admin{display:none;padding:120px 40px;background:#000}
+
+    .admin h2{font-size:42px;margin-bottom:30px}
+
+    .admin-panel{
+      max-width:700px;margin:auto;background:#050505;padding:40px
+      ;border:1px solid rgba(255,255,255,.08)
+    }
+
+    .admin-panel input{
+      width:100%;padding:12px;margin:10px 0;background:#000;color:#fff;border:none
+    }
+
+    /* CHECKOUT */
+    .checkout{
+      position:fixed;inset:0;background:rgba(0,0,0,.9);
+      display:none;align-items:center;justify-content:center;z-index:5000
+    }
+
+    .checkout-box{
+      background:#050505;padding:40px;max-width:420px;width:100%;
+      border:1px solid rgba(255,255,255,.1)
+    }
+
+    .checkout-box input{
+      width:100%;padding:12px;margin:12px 0;background:#000;color:#fff;border:none
+    }
+
+    /* ANIMATIONS */
+    .reveal{opacity:0;transform:translateY(60px);transition:1s cubic-bezier(.2,.8,.2,1)}
+    .reveal.show{opacity:1;transform:none}
+
+    /* MOBILE */
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;background-size:90%;background-position:center}
+      .hero-text{font-size:42px}
+      .drop-grid{grid-template-columns:1fr}
+      .manifest-grid{grid-template-columns:1fr}
+      nav ul{display:none}
+    }
+  
+
+    /* EXTRA MOTION */
+    .glitch {
+      position: relative;
+      animation: glitch 2.5s infinite;
+    }
+
+    @keyframes glitch {
+      0% { text-shadow:2px 0 red,-2px 0 cyan; }
+      20% { text-shadow:-2px 0 red,2px 0 cyan; }
+      40% { text-shadow:2px 0 red,-2px 0 cyan; }
+      60% { text-shadow:-2px 0 red,2px 0 cyan; }
+      80% { text-shadow:1px 0 red,-1px 0 cyan; }
+      100% { text-shadow:0 0 transparent; }
+    }
+
+    .float {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-12px)}
+    }
+
+    .btn{
+      position:relative;
+      overflow:hidden;
+    }
+
+    .btn::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg,transparent,rgba(255,255,255,.3),transparent);
+      transform:translateX(-100%);
+    }
+
+    .btn:hover::after{
+      animation: shine .8s forwards;
+    }
+
+    @keyframes shine{
+      to{transform:translateX(100%)}
+    }
+
+    .item img{
+      transition:.6s ease;
+    }
+
+    .item:hover img{
+      transform:scale(1.08) rotate(-1deg);
+      filter:contrast(120%) brightness(1.1) saturate(1.1);(120%);
+    }
+
+    nav{
+      transition:.4s ease;
+    }
+
+    nav.scrolled{
+      padding:12px 40px;
+      background:rgba(0,0,0,.97);
+    }
+
+  
+
+    .item h3{
+      transition:.4s;
+    }
+
+    .item:hover h3{
+      letter-spacing:3px;
+    }
+
+    .item button{
+      width:100%;
+      margin-top:10px;
+      transform:translateY(20px);
+      opacity:0;
+      transition:.4s;
+    }
+
+    .item:hover button{
+      transform:none;
+      opacity:1;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="brand">
+    <img src="fah-white.png"> FAH
+  </div>
+
+  <ul>
+    <li><a href="#home">Street</a></li>
+    <li><a href="#countdown">Drop</a></li>
+    <li><a href="#manifest">Code</a></li>
+    <li><a href="#members">Access</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero">
+
+  <div class="hero-left reveal">
+
+    <div class="hero-text glitch">
+      FUTURE AUTHENTIC HUSTLE
+      <span>Built from streets. No mercy.</span>
+    </div>
+
+    <div>
+      <button class="btn" onclick="openCheckout()">Buy Now</button>
+      <button class="btn dark" onclick="scrollToMembers()">Members</button>
+    </div>
+
+  </div>
+
+  <div class="hero-right reveal">
+    <div class="street-box">
+      <p>
+        This is not fashion.<br>
+        This is survival.<br>
+        No sponsors. No mercy. No excuses.
+      </p>
+    </div>
+  </div>
+    </div>
+  </div>
+</section>
+
+<!-- COUNTDOWN -->
+<section id="countdown" class="countdown reveal">
+  <h2>NEXT DROP</h2>
+
+  <div class="timer">
+    <div><span id="days">00</span><br>DAYS</div>
+    <div><span id="hours">00</span><br>HRS</div>
+    <div><span id="mins">00</span><br>MIN</div>
+    <div><span id="secs">00</span><br>SEC</div>
+  </div>
+</section>
+
+<!-- DROP -->
+<section class="drop">
+
+  <div class="drop-grid">
+
+    <div class="item reveal">
+      <div class="item-inner">
+      <img src="hoodie-black-back.png" class="float">
+      <h3>Hoodie Black Back</h3>
+      <p>Limited / Street Issue</p>
+      <button class="btn" onclick="openCheckout()">Buy</button>
+    </div>
+      </div>
+
+    <div class="item reveal">
+      <div class="item-inner">
+      <img src="tshirt-back.png" class="float">
+      <h3>Tee Back Logo</h3>
+      <p>Essential / Raw Fit</p>
+      <button class="btn" onclick="openCheckout()">Buy</button>
+    </div>
+      </div>
+
+    <div class="item reveal">
+      <div class="item-inner">
+      <img src="hoodie-back-white.png" class="float">
+      <h3>Hoodie White Back</h3>
+      <p>Clean / Limited</p>
+      <button class="btn" onclick="openCheckout()">Buy</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- MANIFEST -->
+<section id="manifest" class="manifest">
+
+  <div class="manifest-grid">
+
+    <div class="reveal">
+      <h2>NO RULES.<br>NO FEAR.<br>NO FAKE.</h2>
+
+      <p>
+        We move in silence. We build in darkness.
+        Respect is currency. Loyalty is blood.
+      </p>
+    </div>
+
+    <div class="manifest-tag reveal">
+      STREET OVER STATUS<br><br>
+      RESPECT OVER HYPE
+    </div>
+
+  </div>
+</section>
+
+<!-- MEMBERS -->
+<section id="members" class="members">
+
+  <div class="members-box reveal">
+
+    <h3>PRIVATE ACCESS</h3>
+
+    <input type="password" id="pass" placeholder="ENTER CODE">
+
+    <button class="btn" onclick="checkPass()">Unlock</button>
+
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin" class="admin">
+
+  <div class="admin-panel">
+    <h2>ADMIN PANEL</h2>
+
+    <p>Change Drop Date</p>
+    <input type="datetime-local" id="adminDate">
+
+    <button class="btn" onclick="saveDate()">Save</button>
+  </div>
+</section>
+
+<!-- CHECKOUT -->
+<div id="checkout" class="checkout">
+
+  <div class="checkout-box">
+
+    <h3>SECURE CHECKOUT</h3>
+
+    <input placeholder="Full Name">
+    <input placeholder="Email">
+    <input placeholder="Card Number">
+    <input placeholder="MM/YY">
+    <input placeholder="CVC">
+
+    <button class="btn">Pay</button>
+    <button class="btn dark" onclick="closeCheckout()">Close</button>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="text-align:center;padding:50px;font-size:12px;opacity:.5">
+  © 2026 FAH — STREET SYSTEM
+</footer>
+
+<script>
+/* REVEAL */
+const observer=new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('show')})
+},{threshold:.2});
+
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* COUNTDOWN */
+let dropDate=localStorage.getItem('dropDate')||'2026-06-01T00:00';
+
+function updateTimer(){
+  const d=new Date(dropDate)-new Date();
+  if(d<0)return;
+
+  document.getElementById('days').textContent=Math.floor(d/86400000);
+  document.getElementById('hours').textContent=Math.floor(d/3600000)%24;
+  document.getElementById('mins').textContent=Math.floor(d/60000)%60;
+  document.getElementById('secs').textContent=Math.floor(d/1000)%60;
+}
+setInterval(updateTimer,1000);
+updateTimer();
+
+/* CHECKOUT */
+function openCheckout(){document.getElementById('checkout').style.display='flex'}
+function closeCheckout(){document.getElementById('checkout').style.display='none'}
+
+/* MEMBERS */
+function checkPass(){
+  const p=document.getElementById('pass').value;
+  if(p==='FAH666'){
+    document.getElementById('admin').style.display='block';
+    alert('Access Granted');
+  }else{
+    alert('Access Denied');
+  }
+}
+
+/* ADMIN */
+function saveDate(){
+  const d=document.getElementById('adminDate').value;
+  if(d){
+    localStorage.setItem('dropDate',d);
+    dropDate=d;
+    alert('Drop Updated');
+  }
+}
+
+function scrollToMembers(){
+  document.getElementById('members').scrollIntoView({behavior:'smooth'});
+}
+
+
+/* NAV SCROLL EFFECT */
+window.addEventListener('scroll',()=>{
+  const nav=document.querySelector('nav');
+  if(window.scrollY>80){
+    nav.classList.add('scrolled');
+  }else{
+    nav.classList.remove('scrolled');
+  }
+});
+
+/* PARALLAX HERO */
+window.addEventListener('scroll',()=>{
+  const hero=document.querySelector('.hero');
+  const y=window.scrollY;
+  hero.style.backgroundPosition=`right ${50 + y*0.05}%`;
+});
+
+</script>
+
+
+
+<script>
+/* SHOP SYSTEM */
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+const products = {
+  hoodieBlack:{stock:5,price:89,name:'Hoodie Black Back'},
+  teeBack:{stock:8,price:49,name:'Tee Back Logo'},
+  hoodieWhite:{stock:4,price:89,name:'Hoodie White Back'}
+};
+
+function renderStock(){
+  document.querySelectorAll('[data-product]').forEach(card=>{
+    const id = card.dataset.product;
+    const p = products[id];
+    const stockEl = card.querySelector('.stock');
+    const btn = card.querySelector('.buy');
+
+    if(p.stock <= 0){
+      stockEl.textContent = 'SOLD OUT';
+      stockEl.style.color = 'red';
+      btn.disabled = true;
+      btn.textContent = 'Sold Out';
+      btn.style.opacity = .4;
+    }else{
+      stockEl.textContent = `Only ${p.stock} left`;
+    }
+  });
+}
+
+function addToCart(id){
+  if(products[id].stock<=0) return;
+
+  products[id].stock--;
+  cart.push(id);
+
+  localStorage.setItem('cart',JSON.stringify(cart));
+  renderStock();
+  alert('Added to cart');
+}
+
+function toggleWish(id){
+  if(wishlist.includes(id)){
+    wishlist = wishlist.filter(x=>x!==id);
+  }else{
+    wishlist.push(id);
+  }
+  localStorage.setItem('wishlist',JSON.stringify(wishlist));
+  updateWishlistUI();
+}
+
+function updateWishlistUI(){
+  document.querySelectorAll('[data-wish]').forEach(btn=>{
+    const id = btn.dataset.wish;
+    btn.textContent = wishlist.includes(id)?'♥ Saved':'♡ Save';
+  });
+}
+
+function openCart(){
+  let txt = 'CART:
+
+';
+  let total = 0;
+
+  cart.forEach(id=>{
+    const p = products[id];
+    txt += `• ${p.name} €${p.price}
+`;
+    total += p.price;
+  });
+
+  txt += `
+TOTAL: €${total}`;
+  alert(txt);
+}
+
+renderStock();
+updateWishlistUI();
+</script>
+
+</body>
+</html>

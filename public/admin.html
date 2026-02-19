@@ -1,0 +1,45 @@
+<h1>FAH ADMIN</h1>
+
+<input id="email" placeholder="Email"><br>
+<input id="pass" type="password"><br>
+
+<button onclick="login()">LOGIN</button>
+
+<hr>
+
+<input id="drop" placeholder="Drop date">
+<button onclick="setDrop()">SET DROP</button>
+
+<script>
+
+let token='';
+
+function login(){
+
+fetch('/api/login',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+ email:email.value,
+ password:pass.value
+})
+})
+.then(r=>r.json())
+.then(d=>token=d.token);
+
+}
+
+function setDrop(){
+
+fetch('/api/drop',{
+method:'POST',
+headers:{
+ 'Content-Type':'application/json',
+ 'Authorization':token
+},
+body:JSON.stringify({date:drop.value})
+});
+
+}
+
+</script>

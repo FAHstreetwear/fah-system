@@ -1,0 +1,16 @@
+{
+ "name": "fah",
+ "version": "1.0.0",
+ "main": "server/server.js",
+ "scripts": {
+  "start": "node server/server.js"
+ },
+ "dependencies": {
+  "bcrypt": "^5.1.1",
+  "cors": "^2",
+  "dotenv": "^16",
+  "express": "^4",
+  "jsonwebtoken": "^9",
+  "sqlite3": "^5"
+ }
+}

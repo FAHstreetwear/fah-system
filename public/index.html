@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAH</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+
+body{
+background:#020202;
+color:#f2f2f2;
+overflow-x:hidden;
+}
+
+:root{
+--dark:#050505;
+--glass:rgba(15,15,15,.82);
+--white:#fff;
+}
+/* BUTTON STYLE */
+.btn{
+  padding:14px 28px;
+  background:#fff;
+  color:#000;
+  font-weight:800;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-size:12px;
+  border:none;
+  cursor:pointer;
+  transition:.3s;
+  box-shadow:0 6px 18px rgba(0,0,0,.6);
+}
+/* ADD TO CART FX */
+.btn.added{
+  background:#0f0;
+  color:#000;
+  pointer-events:none;
+}
+
+.cart-btn.shake{
+  animation:shake .4s;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-4px)}
+  50%{transform:translateX(4px)}
+  75%{transform:translateX(-2px)}
+  100%{transform:none}
+}
+
+.btn:hover{
+  background:#000;
+  color:#fff;
+  border:1px solid #fff;
+  transform:translateY(-2px);
+}
+
+.btn:active{
+  transform:scale(.95);
+}
+
+.btn.dark{
+  background:#000;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.3);
+}
+
+.btn.dark:hover{
+  background:#fff;
+  color:#000;
+}
+
+/* NOISE */
+body::after{
+content:"";
+position:fixed;
+inset:0;
+background:url("https://grainy-gradients.vercel.app/noise.svg");
+opacity:.06;
+pointer-events:none;
+z-index:9999;
+}
+
+/* BACKGROUND FLOW */
+.bg-flow{
+position:fixed;
+inset:-50%;
+z-index:-2;
+background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.05),transparent 45%),
+radial-gradient(circle at 70% 60%,rgba(255,255,255,.04),transparent 45%),
+radial-gradient(circle at 50% 50%,rgba(255,255,255,.03),transparent 50%);
+animation: flow 35s linear infinite alternate;
+}
+
+.bg-lines{
+position:fixed;
+inset:0;
+z-index:-1;
+background:linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+background-size:80px 80px;
+animation: slide 20s linear infinite;
+opacity:.2;
+}
+.bg-pulse{
+position:fixed;
+inset:0;
+z-index:-3;
+background:radial-gradient(circle at center,rgba(255,255,255,.03),transparent 70%);
+animation:pulse 6s ease-in-out infinite;
+}
+
+@keyframes pulse{
+0%,100%{opacity:.3}
+50%{opacity:.6}
+}
+
+@keyframes flow{
+from{transform:translate(0,0) rotate(0deg)}
+to{transform:translate(-120px,-90px) rotate(2deg)}
+}
+
+@keyframes slide{
+from{background-position:0 0}
+to{background-position:500px 0}
+}
+
+/* NAV */
+nav{
+position:fixed;
+top:0;width:100%;
+padding:22px 50px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(0,0,0,.85);
+backdrop-filter:blur(18px);
+z-index:1000;
+border-bottom:1px solid rgba(255,255,255,.06);
+transition:.4s;
+}
+
+nav.scrolled{
+padding:14px 50px;
+background:rgba(0,0,0,.95);
+}
+
+.brand{
+display:flex;align-items:center;gap:14px;
+font-weight:900;letter-spacing:4px;font-size:22px
+}
+
+.brand img{width:48px}
+
+nav ul{display:flex;list-style:none;gap:34px}
+
+nav a{
+color:#eee;text-decoration:none;font-size:12px;
+font-weight:700;letter-spacing:2px;text-transform:uppercase;
+opacity:.7;transition:.3s
+}
+
+nav a:hover{opacity:1}
+
+.cart-btn{
+font-size:18px;
+cursor:pointer;
+position:relative
+}
+
+.cart-count{
+position:absolute;top:-6px;right:-8px;
+background:red;color:#fff;font-size:10px;
+border-radius:50%;padding:2px 5px
+}
+
+/* HERO */
+.hero{
+min-height:100vh;
+display:grid;
+grid-template-columns:1.2fr .8fr;
+padding:180px 90px 100px;
+background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,.95)),url('fah-white.png');
+background-repeat:no-repeat;
+background-size:55%;
+background-position:right center;
+}
+
+.hero-left{display:flex;flex-direction:column;justify-content:center;gap:45px}
+
+.hero-text{
+font-size:70px;
+font-weight:900;
+line-height:1.05;
+letter-spacing:4px;
+text-transform:uppercase;
+animation: heroIn 1.6s cubic-bezier(.2,.8,.2,1) forwards;
+opacity:0;
+transform:translateY(40px);
+}
+
+@keyframes heroIn{
+to{
+opacity:1;
+transform:none;
+}
+}
+
+
+/* COUNTDOWN */
+.countdown{padding:120px 40px;background:#050505;text-align:center}
+
+.countdown h2{font-size:52px;font-weight:900;letter-spacing:4px;margin-bottom:40px}
+
+.timer{display:flex;justify-content:center;gap:35px;font-size:26px;font-weight:800}
+
+.timer div{background:#000;padding:22px 28px;border:1px solid rgba(255,255,255,.08)}
+
+/* DROP */
+.drop{padding:150px 90px;background:#040404}
+
+.drop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:55px}
+
+.item{
+background:#0a0a0a;padding:26px;border:1px solid rgba(255,255,255,.06);
+transition:.6s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden
+}
+
+.item:hover{transform:translateY(-14px) scale(1.03)}
+
+.item img{
+width:100%;
+margin-bottom:20px;
+transition:.7s cubic-bezier(.2,.8,.2,1);
+filter:contrast(110%) brightness(1.05);
+}
+
+.item:hover img{
+transform:scale(1.12) rotate(-1deg);
+filter:contrast(130%) brightness(1.1);
+}
+
+
+.item:hover img{transform:scale(1.08)}
+
+.item h3{font-weight:800;margin-bottom:6px}
+
+.item p{font-size:13px;opacity:.6;margin-bottom:14px}
+
+/* CART PANEL */
+.cart-panel{
+position:fixed;top:0;right:-420px;width:400px;height:100vh;
+background:#050505;border-left:1px solid rgba(255,255,255,.1);
+z-index:4000;padding:30px;transition:.4s;overflow-y:auto
+}
+
+.cart-panel.active{right:0}
+
+.cart-item{display:flex;justify-content:space-between;margin:15px 0;font-size:14px}
+
+.cart-total{margin:25px 0;font-weight:800}
+
+/* MANIFEST */
+.manifest{padding:160px 90px;background:#000}
+
+.manifest-grid{display:grid;grid-template-columns:2fr 1fr;gap:80px}
+
+.manifest h2{font-size:70px;font-weight:900;margin-bottom:30px}
+
+.manifest p{font-size:17px;line-height:1.9;opacity:.9}
+
+.manifest-tag{background:#050505;padding:40px;border:1px solid rgba(255,255,255,.08);letter-spacing:2px;font-weight:700}
+
+/* MEMBERS */
+.members{padding:140px 40px;background:#020202;text-align:center}
+
+.members-box{max-width:540px;margin:auto;background:var(--glass);padding:65px 50px;border:1px solid rgba(255,255,255,.08)}
+
+.members input{width:100%;padding:15px;background:#000;border:none;color:#fff;margin:22px 0;text-align:center}
+
+/* SOCIAL */
+.socials{display:flex;justify-content:center;gap:30px;margin:40px 0}
+
+.socials a{
+color:#fff;
+font-size:24px;
+opacity:.6;
+transition:.4s;
+}
+
+.socials a:hover{
+opacity:1;
+transform:scale(1.4) rotate(-5deg);
+text-shadow:0 0 15px rgba(255,255,255,.5);
+}
+
+
+
+
+/* ANIM */
+.reveal{opacity:0;transform:translateY(70px);transition:1s cubic-bezier(.2,.8,.2,1)}
+.reveal.show{opacity:1;transform:none}
+
+/* MOBILE */
+@media(max-width:900px){
+.hero{grid-template-columns:1fr;background-size:90%;background-position:center;padding:150px 30px}
+.hero-text{font-size:44px}
+.drop-grid{grid-template-columns:1fr}
+.manifest-grid{grid-template-columns:1fr}
+nav ul{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-flow"></div>
+<div class="bg-lines"></div>
+<div class="bg-pulse"></div>
+
+<!-- NAV -->
+<nav>
+<div class="brand"><img src="fah-white.png"></div>
+<ul>
+<li><a href="#home">Street</a></li>
+<li><a href="#countdown">Drop</a></li>
+<li><a href="#manifest">Code</a></li>
+<li><a href="#members">Access</a></li>
+</ul>
+<div class="cart-btn" onclick="toggleCart()">
+<i class="fa-solid fa-bag-shopping"></i>
+<span class="cart-count" id="cartCount">0</span>
+</div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero">
+
+<div class="hero-left reveal">
+
+<div class="hero-text">
+FAH STREETWEAR
+<span>Underground • Independent • Raw</span>
+</div>
+
+<div>
+<button class="btn" onclick="scrollToShop()">Buy Now</button>
+<button class="btn dark" onclick="scrollToMembers()">Members Area</button>
+</div>
+
+</div>
+</section>
+
+<!-- COUNTDOWN -->
+<section id="countdown" class="countdown reveal">
+<h2>NEXT DROP</h2>
+<div class="timer">
+<div><span id="days">00</span><br>DAYS</div>
+<div><span id="hours">00</span><br>HRS</div>
+<div><span id="mins">00</span><br>MIN</div>
+<div><span id="secs">00</span><br>SEC</div>
+</div>
+</section>
+
+<!-- DROP -->
+<section class="drop" id="shop">
+<div class="drop-grid">
+
+<div class="item reveal">
+<img src="hoodie-black-back.png">
+<h3>Hoodie Cards Black</h3>
+<p>€89 / Limited</p>
+<button class="btn" onclick="addToCart('Hoodie Black',89,this)">Add to Cart</button>
+</div>
+
+<div class="item reveal">
+<img src="tshirt-back.png">
+<h3>Tee Rose Cream</h3>
+<p>€49 / Essential</p>
+<button class="btn" onclick="addToCart('Hoodie Black',89,this)">Add to Cart</button>
+</div>
+
+<div class="item reveal">
+<img src="hoodie-back-white.png">
+<h3>Hoodie Cards Cream</h3>
+<p>€89 / Limited</p>
+<button class="btn" onclick="addToCart('Hoodie Black',89,this)">Add to Cart</button>
+</div>
+
+</div>
+</section>
+
+<!-- CART -->
+<div class="cart-panel" id="cartPanel">
+<h3>YOUR CART</h3>
+<div id="cartItems"></div>
+<div class="cart-total" id="cartTotal">Total: €0</div>
+<button class="btn" onclick="checkout()">Checkout</button>
+</div>
+
+<!-- MANIFEST -->
+<section id="manifest" class="manifest">
+<div class="manifest-grid">
+
+<div class="reveal">
+<h2>NO RULES.<br>NO FEAR.<br>NO FAKE.</h2>
+<p>Built for the real ones</p>
+</div>
+
+<div class="manifest-tag reveal">
+STREET OVER STATUS<br><br>RESPECT OVER HYPE
+</div>
+
+</div>
+</section>
+
+<!-- MEMBERS -->
+<section id="members" class="members">
+<div class="members-box reveal">
+<h3>PRIVATE ACCESS</h3>
+<input type="password" placeholder="ENTER CODE">
+<button class="btn">Request Access</button>
+</div>
+</section>
+
+<!-- SOCIAL -->
+<div class="socials">
+<a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+<a href="https://tiktok.com" target="_blank"><i class="fab fa-tiktok"></i></a>
+<a href="mailto:info@fahbrand.com"><i class="fa-solid fa-envelope"></i></a>
+</div>
+
+
+<footer style="text-align:center;padding:40px;font-size:12px;opacity:.5">© 2026 FAH STREETWEAR</footer>
+
+<script>
+/* REVEAL */
+const observer=new IntersectionObserver(e=>{
+e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('show')})
+},{threshold:.2});
+
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* COUNTDOWN */
+let dropDate='2026-06-01T00:00';
+
+function updateTimer(){
+const d=new Date(dropDate)-new Date();
+if(d<0)return;
+
+days.textContent=Math.floor(d/86400000);
+hours.textContent=Math.floor(d/3600000)%24;
+mins.textContent=Math.floor(d/60000)%60;
+secs.textContent=Math.floor(d/1000)%60;
+}
+setInterval(updateTimer,1000);updateTimer();
+
+/* SCROLL */
+function scrollToShop(){document.getElementById('shop').scrollIntoView({behavior:'smooth'})}
+function scrollToMembers(){document.getElementById('members').scrollIntoView({behavior:'smooth'})}
+
+/* CART SYSTEM */
+let cart = JSON.parse(localStorage.getItem('fah_cart')) || [];
+
+const cartPanel = document.getElementById('cartPanel');
+const cartBtn = document.querySelector('.cart-btn');
+
+function addToCart(name,price,btn){
+
+  cart.push({name,price});
+  localStorage.setItem('fah_cart',JSON.stringify(cart));
+
+  updateCart();
+  openCart();
+
+  /* BUTTON FX */
+  if(btn){
+    const original=btn.innerText;
+
+    btn.classList.add('added');
+    btn.innerText='ADDED ✓';
+
+    setTimeout(()=>{
+      btn.classList.remove('added');
+      btn.innerText=original;
+    },900);
+  }
+
+  /* CART SHAKE */
+  cartBtn.classList.add('shake');
+
+  setTimeout(()=>{
+    cartBtn.classList.remove('shake');
+  },400);
+}
+
+
+/* OPEN */
+function openCart(){
+  cartPanel.classList.add('active');
+}
+
+/* CLOSE */
+function closeCart(){
+  cartPanel.classList.remove('active');
+}
+
+/* TOGGLE */
+function toggleCart(){
+  cartPanel.classList.toggle('active');
+}
+
+/* REMOVE */
+function removeFromCart(index){
+
+  cart.splice(index,1);
+
+  localStorage.setItem('fah_cart',JSON.stringify(cart));
+  updateCart();
+}
+
+/* UPDATE */
+function updateCart(){
+
+  const box=document.getElementById('cartItems');
+  const totalBox=document.getElementById('cartTotal');
+  const count=document.getElementById('cartCount');
+
+  box.innerHTML='';
+  let total=0;
+
+  cart.forEach((item,i)=>{
+
+    const div=document.createElement('div');
+    div.className='cart-item';
+
+    div.innerHTML=`
+      <div>
+        ${item.name}<br>
+        <small>€${item.price}</small>
+      </div>
+
+      <button onclick="removeFromCart(${i})"
+        style="
+          background:none;
+          border:none;
+          color:red;
+          font-size:16px;
+          cursor:pointer;
+        "
+      >✕</button>
+    `;
+
+    box.appendChild(div);
+
+    total+=item.price;
+
+  });
+
+  totalBox.textContent=`Total: €${total}`;
+  count.textContent=cart.length;
+}
+
+/* CLICK OUTSIDE CLOSE */
+document.addEventListener('click',e=>{
+
+  if(
+    cartPanel.classList.contains('active') &&
+    !cartPanel.contains(e.target) &&
+    !cartBtn.contains(e.target)
+  ){
+    closeCart();
+  }
+
+});
+
+function checkout(){
+
+  if(cart.length===0){
+    alert('Cart empty');
+    return;
+  }
+
+  window.open(
+    'https://buy.stripe.com/test_4gw3fZ9moc7N8rC8ww',
+    '_blank'
+  );
+}
+
+updateCart();
+
+/* NAV */
+window.addEventListener('scroll',()=>{
+if(scrollY>80)document.querySelector('nav').classList.add('scrolled');
+else document.querySelector('nav').classList.remove('scrolled');
+});
+</script>
+
+</body>
+</html>
